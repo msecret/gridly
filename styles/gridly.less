@@ -1,0 +1,126 @@
+@second: #eee;
+@dark: #333;
+@light: #fafafa;
+
+
+/*
+html5doctor.com Reset Stylesheet
+v1.6.1
+Last Updated: 2010-09-17
+Author: Richard Clark - http://richclarkdesign.com
+Twitter: @rich_clark
+*/
+html, body, div, span, object, h1, h2, h3, h4, h5, h6, p, em, img, strong,
+b, i,
+dl, dt, dd, ol, ul, li,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+body {
+    line-height:1;
+    font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
+    color: @dark;
+}
+article,aside,details,figcaption,figure,
+footer,header,hgroup,menu,nav,section {
+    display:block;
+}
+nav ul {
+    list-style:none;
+}
+a {
+    margin:0;
+    padding:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+/*  ====================================
+    Main Styles
+    ==================================== */
+
+body,html{
+    height:100%;
+}
+.clear { clear:both; }
+.wrap {
+    width: 100%;
+    height: 100%;
+}
+
+.text {
+    position:absolute;
+    left: -99999px;
+}
+
+.stage {
+    height: 100%;
+    display:none;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 0;
+}
+
+.smallcell {
+    display: inline-block;
+    width:1.45%;
+    height: 2.6%;
+    padding: 0.2%;
+    background: @light;
+    -moz-box-sizing:border-box;
+    -mwebkit-box-sizing:border-box;
+    box-sizing:border-box;
+}
+.smallcell .innercell {
+    background: @second;
+    width: 100%;
+    height: 100%;
+    -moz-transition: all 400ms linear 0ms;
+    -webkit-transition: all 400ms linear 0ms;
+}
+.smallcell:hover .innercell {
+    background: #333;
+    -moz-transition: all 0ms linear 0s;
+    -webkit-transition: all 0ms linear 0s;
+}
+.stage .bigcell {
+    position: absolute;
+    background: @light;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    padding: 8px 14px;
+    white-space: normal;
+    font-size: inherit;
+    overflow: visible;
+}
+.stage .bigcell:hover {
+    background: @second;
+}
+.stage .bigcell {
+
+    h2 {
+
+        font-size: 22px;
+    }
+    p {
+        font-size: 15px;
+        line-height: 19px;
+        margin: 14px 0 0;
+        height: 136px;
+        overflow:hidden;
+    }
+    p:after {
+        content: '...';
+    }
+
+}
