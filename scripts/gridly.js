@@ -6,7 +6,9 @@
 
 var GRIDLY = GRIDLY || {};
 
-GRIDLY.$stage = $('.stage');
+// TODO what if now stage div is found?
+GRIDLY.$stage = $('#gridly .stage');
+GRIDLY.$textDiv = $('.text');
 GRIDLY.$boxes = [];
 GRIDLY.$cells = [];
 
@@ -24,8 +26,8 @@ GRIDLY.utils = (function() {
     return {
         inherit: inherit,
         extend: extend
-    }
-})();
+    };
+}());
 
 GRIDLY.grid = (function($) {
 
@@ -36,6 +38,15 @@ GRIDLY.grid = (function($) {
     // private vars
         id = 0,
         offset = 0;
+
+    //events
+    $(window).on('resize', function(e) {
+        var i,
+            ilen;
+        for (i = 0, ilen = GRIDLY.$boxes.length; i < ilen; i++) {
+            GRIDLY.$boxes[i].render();
+        }
+    });
 
     // Cell
     function Cell(pos) {
@@ -55,7 +66,7 @@ GRIDLY.grid = (function($) {
         updatedPos.w = $inner.width();
         updatedPos.h = $inner.height();
 
-        return updatedPos;   
+        return updatedPos;
     };
     Cell.prototype.appended = function() {
         var elem = this.$element,
@@ -79,21 +90,21 @@ GRIDLY.grid = (function($) {
 
     };
 
-    function SmallCell(pos, elem) {
+    function SmallCell(pos, $html) {
         this.id = id;
         this.gridPos = pos;
-        this.$element = elem || $('' +
+        this.$element = $html || $('' +
             '<div class="cell smallcell row'+pos[0]+ ' col'+pos[1]+' id'+this.id+'">' +
-                '<div class="innercell"></div>' +
+            '<div class="innercell"></div>' +
             '</div>');
         id++;
     }
     utils.extend(SmallCell, Cell);
 
-    function BigCell(pos) {
+    function BigCell(pos, $html) {
         this.id = id;
         this.gridPos = pos;
-        this.$element = $('<div class="cell bigcell id'+this.id+'"></div>');
+        this.$element = $html.addClass('cell bigcell id'+ this.id);
         this.startCell = getCell([pos.r, pos.c]);
         this.endCell = getCell([parseInt(pos.r+pos.h, 10), parseInt(pos.c+pos.w, 10)]);
         id++;
@@ -124,11 +135,29 @@ GRIDLY.grid = (function($) {
 
     };
 
-    function initDisplay(r, c, callback) {
+    function initDisplay(options, callback) {
 
-        var stageWorker = new Worker('js/stage.js');
+        var stageWorker = new Worker('js/stage.js'),
+            defaults = {
+                rows: 40,
+                cols: 72,
+                textDiv: $('.text')
+            },
+            opts = options || defaults;
+
+
+        GRIDLY.$textDiv = opts.textDiv;
+        initSmallCells(opts.rows, opts.cols, callback);
+        initBigCells();
+
+    }
+
+    function initSmallCells(rows, cols, callback) {
+        var stageWorker;
+
         $stage.append($('<div class="message">loading...</div>'));
 
+        stageWorker = new Worker('js/stage.js');
         stageWorker.onmessage = function(e) {
             addCells(e.data);
             $('.message').remove();
@@ -144,7 +173,24 @@ GRIDLY.grid = (function($) {
             'rows': r,
             'cols': c
         });
+    }
 
+    function initBigCells() {
+        GRIDLY.$textDiv .children().each(function () {
+            if ($(this).hasClass('bigcell')) {
+                var pos = $(this).data('position'),
+                    s = new BigCell(
+                        {
+                            r: pos.r,
+                            c: pos.c,
+                            w: pos.w,
+                            h: pos.h
+                        }
+                        , $(this));
+                GRIDLY.$boxes.push(s);
+                s.render();
+            }
+        });
     }
 
     function addCells(data) {
@@ -155,9 +201,9 @@ GRIDLY.grid = (function($) {
 
         for( ; i < ilen; i++) {
             if (data[i].search(rowRegEx) > 0) {
-               var s = new SmallCell([parseInt(data[i].match(rowRegEx)[1], 10), parseInt(data[i].match(colRegEx)[1], 10)], $(data[i]));
-               GRIDLY.$cells.push(s);
-               $stage.append(s.$element);
+                var s = new SmallCell([parseInt(data[i].match(rowRegEx)[1], 10), parseInt(data[i].match(colRegEx)[1], 10)], $(data[i]));
+                GRIDLY.$cells.push(s);
+                $stage.append(s.$element);
             }
             else { $stage.append($(data[i])) }
         }
