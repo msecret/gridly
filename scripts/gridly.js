@@ -137,18 +137,15 @@ GRIDLY.grid = (function($) {
 
     function initDisplay(options, callback) {
 
-        var stageWorker = new Worker('js/stage.js'),
-            defaults = {
+         var defaults = {
                 rows: 40,
                 cols: 72,
                 textDiv: $('.text')
             },
             opts = options || defaults;
 
-
         GRIDLY.$textDiv = opts.textDiv;
         initSmallCells(opts.rows, opts.cols, callback);
-        initBigCells();
 
     }
 
@@ -157,9 +154,10 @@ GRIDLY.grid = (function($) {
 
         $stage.append($('<div class="message">loading...</div>'));
 
-        stageWorker = new Worker('js/stage.js');
+        stageWorker = new Worker('scripts/stage.js');
         stageWorker.onmessage = function(e) {
             addCells(e.data);
+            initBigCells();
             $('.message').remove();
             callback();
         };
@@ -170,13 +168,13 @@ GRIDLY.grid = (function($) {
 
         // TODO add here so you pass in string of div
         stageWorker.postMessage({'cmd': 'initDisplay',
-            'rows': r,
-            'cols': c
+            'rows': rows,
+            'cols': cols
         });
     }
 
     function initBigCells() {
-        GRIDLY.$textDiv .children().each(function () {
+        GRIDLY.$textDiv.children().each(function () {
             if ($(this).hasClass('bigcell')) {
                 var pos = $(this).data('position'),
                     s = new BigCell(
@@ -207,7 +205,6 @@ GRIDLY.grid = (function($) {
             }
             else { $stage.append($(data[i])) }
         }
-
     }
 
     function getCell(pos) {

@@ -24,7 +24,9 @@ $(document).ready(function() {
     };
     grid.initDisplay(options, function() {
 
-        $('.stage').fadeIn('slow');
+        $stage.animate({
+            opacity: 1.0
+        }, 1000);
 
     });
 
